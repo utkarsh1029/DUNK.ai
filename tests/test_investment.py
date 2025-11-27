@@ -1,6 +1,6 @@
 # tests/test_investment.py
 
-from tools.investment_navigator.investment import InvestmentNavigator
+from dunk_ai.tools.investment_navigator.investment import InvestmentNavigator
 
 def test_get_stock_price():
     tool = InvestmentNavigator()

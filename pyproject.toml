@@ -10,5 +10,8 @@ authors = [
     { name = "Utkarsh" }
 ]
 
+[tool.setuptools]
+package-dir = {"" = "backend"}
+
 [tool.setuptools.packages.find]
-where = ["."]
+where = ["backend"]

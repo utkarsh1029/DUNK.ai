@@ -1,6 +1,6 @@
 # tests/test_investment_live.py
 
-from tools.investment_navigator.investment import InvestmentNavigator
+from dunk_ai.tools.investment_navigator.investment import InvestmentNavigator
 
 def test_live_data():
     inv = InvestmentNavigator()
@@ -18,7 +18,7 @@ def test_stock_analytics():
     print(result)
 
 def test_stock_analytics():
-    from tools.investment_navigator.investment import InvestmentNavigator
+    from dunk_ai.tools.investment_navigator.investment import InvestmentNavigator
     inv = InvestmentNavigator()
 
     print("\n--- 🔍 Stock Analytics Demo ---")

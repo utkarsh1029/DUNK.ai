@@ -15,7 +15,7 @@ Tests cover:
 
 import pytest
 from datetime import datetime
-from tools.loan_clarity.logic import (
+from dunk_ai.tools.loan_clarity.logic import (
     flat_rate,
     reducing_balance,
     calculate_prepayment_impact,
@@ -23,15 +23,15 @@ from tools.loan_clarity.logic import (
     modify_emi,
     modify_tenure
 )
-from tools.loan_clarity.schedule import (
+from dunk_ai.tools.loan_clarity.schedule import (
     generate_amortization_schedule,
     get_outstanding_principal,
     get_year_wise_summary
 )
-from tools.loan_clarity.comparison import compare_loans, break_even_analysis
-from tools.loan_clarity.tax_benefits import calculate_tax_benefits, calculate_lifetime_tax_benefits
-from tools.loan_clarity.eligibility import calculate_loan_eligibility, calculate_affordability
-from tools.loan_clarity.effective_rate import calculate_effective_rate, calculate_apr
+from dunk_ai.tools.loan_clarity.comparison import compare_loans, break_even_analysis
+from dunk_ai.tools.loan_clarity.tax_benefits import calculate_tax_benefits, calculate_lifetime_tax_benefits
+from dunk_ai.tools.loan_clarity.eligibility import calculate_loan_eligibility, calculate_affordability
+from dunk_ai.tools.loan_clarity.effective_rate import calculate_effective_rate, calculate_apr
 
 
 # ========== Basic EMI Calculation Tests ==========
