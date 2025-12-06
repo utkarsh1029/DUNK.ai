@@ -72,8 +72,9 @@ const ChatPage = () => {
       };
       setMessages(prev => [...prev, aiMessage]);
 
-      // Update chat history
-      updateChatHistory([...messages, userMessage, aiMessage]);
+      // Update chat history with latest messages
+      const updatedMessages = [...messages, userMessage, aiMessage];
+      updateChatHistory(updatedMessages);
     }, 1000);
   };
 
