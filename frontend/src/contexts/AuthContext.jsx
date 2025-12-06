@@ -16,8 +16,12 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   // Check if user is already logged in (from localStorage)
   const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem('dunk-user');
-    return savedUser ? JSON.parse(savedUser) : null;
+    try {
+      const savedUser = localStorage.getItem('dunk-user');
+      return savedUser ? JSON.parse(savedUser) : null;
+    } catch (error) {
+      return null;
+    }
   });
 
   const [isAuthenticated, setIsAuthenticated] = useState(!!user);
