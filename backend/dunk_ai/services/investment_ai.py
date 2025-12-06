@@ -19,9 +19,9 @@ class InvestmentAI:
                 return {"error": analytics["error"]}
             # Create prompt template for the LLM
             prompt = ChatPromptTemplate.from_template("""
-            You are a financial advisor. Based on the following stock analytics, 
+            You are a financial advisor. Based on the following stock analytics,
             provide a concise, professional insight in 3-4 sentences.
-            
+
             Stock Data: {analytics}
 
             Your analysis should include:
