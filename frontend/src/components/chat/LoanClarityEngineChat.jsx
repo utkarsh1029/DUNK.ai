@@ -262,10 +262,12 @@ const LoanClarityEngineChat = ({ sidebarOpen, setSidebarOpen, user }) => {
     )}`;
   };
 
-  const formatModifyEmi = (result) =>
-    `EMI Modification result:\n• Original EMI: ${currency(result.original_emi)}\n• New tenure: ${result.new_tenure_years?.toFixed(
+  const formatModifyEmi = (result) => {
+    if (!result) return 'Unable to format EMI modification result: missing data.';
+    return `EMI Modification result:\n• Original EMI: ${currency(result.original_emi || 0)}\n• New tenure: ${result.new_tenure_years?.toFixed(
       2
-    )} years\n• Interest saved: ${currency(result.interest_saved)}`;
+    ) || 'N/A'} years\n• Interest saved: ${currency(result.interest_saved || 0)}`;
+  };
 
   const formatModifyTenure = (result) =>
     `Tenure modification result:\n• Original EMI: ${currency(result.original_emi)}\n• New EMI: ${currency(
