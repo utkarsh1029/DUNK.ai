@@ -30,10 +30,14 @@ export const AuthProvider = ({ children }) => {
 
   // Save user to localStorage whenever it changes
   useEffect(() => {
-    if (user) {
-      localStorage.setItem('dunk-user', JSON.stringify(user));
-    } else {
-      localStorage.removeItem('dunk-user');
+    try {
+      if (user) {
+        localStorage.setItem('dunk-user', JSON.stringify(user));
+      } else {
+        localStorage.removeItem('dunk-user');
+      }
+    } catch (error) {
+      // Silently fail if localStorage is unavailable
     }
   }, [user]);
 
