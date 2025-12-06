@@ -16,8 +16,12 @@ export const useTheme = () => {
 export const ThemeProvider = ({ children }) => {
   // Check if user has a saved theme preference, otherwise use 'dark' as default
   const [theme, setTheme] = useState(() => {
-    const savedTheme = localStorage.getItem('dunk-theme');
-    return savedTheme || 'dark';
+    try {
+      const savedTheme = localStorage.getItem('dunk-theme');
+      return savedTheme || 'dark';
+    } catch (error) {
+      return 'dark';
+    }
   });
 
   // Apply theme to document and save to localStorage
