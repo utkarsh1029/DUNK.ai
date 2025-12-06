@@ -10,7 +10,8 @@ from sklearn.multioutput import MultiOutputRegressor
 from sklearn.ensemble import GradientBoostingRegressor
 import joblib
 
-df = pd.read_csv("/content/correctly_modified_data.csv")
+DATA_PATH = "/content/correctly_modified_data.csv"
+df = pd.read_csv(DATA_PATH)
 
 cols_to_drop = [
     'Income', 'Rent', 'Loan_Repayment', 'Insurance',
