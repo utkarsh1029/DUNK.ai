@@ -104,7 +104,7 @@ const InvestmentNavigatorChat = ({ sidebarOpen, setSidebarOpen, user }) => {
       const data = await fetchJson(
         `${API_BASE_URL}/api/investment/mutual-fund?${params.toString()}`
       );
-      return `Latest NAV for ${data.scheme_name}:\n• NAV: ₹${data.latest_nav}\n• Date: ${data.date}\nSource: ${data.note}`;
+      return `Latest NAV for ${data.scheme_name || scheme}:\n• NAV: ₹${data.latest_nav || 'N/A'}\n• Date: ${data.date || 'N/A'}\nSource: ${data.note || 'N/A'}`;
     }
 
     const ticker = detectTicker(userInput);
