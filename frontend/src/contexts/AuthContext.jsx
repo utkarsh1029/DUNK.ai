@@ -68,8 +68,12 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     setIsAuthenticated(false);
-    localStorage.removeItem('dunk-user');
-    localStorage.removeItem('dunk-chat-history');
+    try {
+      localStorage.removeItem('dunk-user');
+      localStorage.removeItem('dunk-chat-history');
+    } catch (error) {
+      // Silently fail if localStorage is unavailable
+    }
   };
 
   // Update user profile
