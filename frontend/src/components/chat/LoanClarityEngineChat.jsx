@@ -140,16 +140,17 @@ const LoanClarityEngineChat = ({ sidebarOpen, setSidebarOpen, user }) => {
   const prompts = featurePrompts['loan-clarity-engine'];
 
   const formatEligibility = (data) => {
-    return `Loan eligibility summary:\n• Monthly income: ${currency(data.monthly_income)}\n• Maximum EMI capacity: ${currency(
-      data.maximum_emi
+    if (!data) return 'Unable to format eligibility: missing data.';
+    return `Loan eligibility summary:\n• Monthly income: ${currency(data.monthly_income || 0)}\n• Maximum EMI capacity: ${currency(
+      data.maximum_emi || 0
     )}\n• Available EMI after obligations: ${currency(
-      data.available_emi
+      data.available_emi || 0
     )}\n• Maximum loan amount: ${currency(
-      data.maximum_loan_amount
+      data.maximum_loan_amount || 0
     )}\n• Recommended loan amount (80% safety): ${currency(
-      data.recommended_loan_amount
-    )}\n• Debt-to-income ratio: ${data.debt_to_income_ratio}%\n\nKeep your EMI within ${currency(
-      data.available_emi
+      data.recommended_loan_amount || 0
+    )}\n• Debt-to-income ratio: ${data.debt_to_income_ratio || 0}%\n\nKeep your EMI within ${currency(
+      data.available_emi || 0
     )} for a healthy profile.`;
   };
 
