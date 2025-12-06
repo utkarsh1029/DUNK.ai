@@ -195,12 +195,19 @@ const LoanClarityEngineChat = ({ sidebarOpen, setSidebarOpen, user }) => {
   };
 
   const fetchJson = async (url, options) => {
-    const response = await fetch(url, options);
-    if (!response.ok) {
-      const body = await response.json().catch(() => ({}));
-      throw new Error(body.detail ?? 'Backend request failed.');
+    try {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body.detail ?? 'Backend request failed.');
+      }
+      return response.json();
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error('Network error: Backend request failed.');
     }
-    return response.json();
   };
 
   const baseLoanParams = (userInput, overrides = {}) => {
