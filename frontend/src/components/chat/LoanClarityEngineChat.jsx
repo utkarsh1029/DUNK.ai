@@ -293,7 +293,7 @@ const LoanClarityEngineChat = ({ sidebarOpen, setSidebarOpen, user }) => {
           window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
         }
       } catch (error) {
-        console.warn('Failed to persist loan profile', error);
+        // Silently fail if localStorage is unavailable (e.g., private browsing)
       }
       return next;
     });
