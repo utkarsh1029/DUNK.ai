@@ -242,14 +242,16 @@ const LoanClarityEngineChat = ({ sidebarOpen, setSidebarOpen, user }) => {
     } years summarized.`;
   };
 
-  const formatPrepayment = (result) =>
-    `Prepayment impact:\n• Original EMI: ${currency(result.original_emi)}\n• Outstanding principal before prepayment: ${currency(
-      result.outstanding_principal
-    )}\n• New principal: ${currency(result.new_principal)}\n${
+  const formatPrepayment = (result) => {
+    if (!result) return 'Unable to format prepayment result: missing data.';
+    return `Prepayment impact:\n• Original EMI: ${currency(result.original_emi || 0)}\n• Outstanding principal before prepayment: ${currency(
+      result.outstanding_principal || 0
+    )}\n• New principal: ${currency(result.new_principal || 0)}\n${
       result.new_emi
         ? `• New EMI: ${currency(result.new_emi)}`
-        : `• New tenure: ${result.new_tenure_years?.toFixed(2)} years`
-    }\n• Interest saved: ${currency(result.interest_saved)}`;
+        : `• New tenure: ${result.new_tenure_years?.toFixed(2) || 'N/A'} years`
+    }\n• Interest saved: ${currency(result.interest_saved || 0)}`;
+  };
 
   const formatSettlement = (result) =>
     `Early settlement summary:\n• Outstanding principal: ${currency(
