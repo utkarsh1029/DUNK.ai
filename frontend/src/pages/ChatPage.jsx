@@ -154,9 +154,10 @@ const ChatPage = () => {
 
   // Load chat from history
   const loadChat = (chat) => {
-    setMessages(chat.messages);
+    if (!chat) return;
+    setMessages(chat.messages || []);
     setCurrentChatId(chat.id);
-    setCurrentCategory(chat.category);
+    setCurrentCategory(chat.category || null);
     setSidebarOpen(false);
   };
 
