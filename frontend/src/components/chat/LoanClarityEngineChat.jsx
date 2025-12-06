@@ -260,12 +260,14 @@ const LoanClarityEngineChat = ({ sidebarOpen, setSidebarOpen, user }) => {
     }\n• Interest saved: ${currency(result.interest_saved || 0)}`;
   };
 
-  const formatSettlement = (result) =>
-    `Early settlement summary:\n• Outstanding principal: ${currency(
-      result.outstanding_principal
-    )}\n• Settlement amount: ${currency(result.settlement_amount)}\n• Interest saved: ${currency(
-      result.interest_saved
+  const formatSettlement = (result) => {
+    if (!result) return 'Unable to format settlement result: missing data.';
+    return `Early settlement summary:\n• Outstanding principal: ${currency(
+      result.outstanding_principal || 0
+    )}\n• Settlement amount: ${currency(result.settlement_amount || 0)}\n• Interest saved: ${currency(
+      result.interest_saved || 0
     )}`;
+  };
 
   const formatModifyEmi = (result) =>
     `EMI Modification result:\n• Original EMI: ${currency(result.original_emi)}\n• New tenure: ${result.new_tenure_years?.toFixed(
