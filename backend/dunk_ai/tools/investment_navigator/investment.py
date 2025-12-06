@@ -121,7 +121,6 @@ class InvestmentNavigator:
         print(f"[resolve_ticker] 🧩 Guessing ticker: {guessed_symbol}")
         return guessed_symbol
 
-        
     def get_stock_price(self, query: str) -> Dict[str, Any]:
         """
         Fetch live stock price by name or ticker.
