@@ -3,8 +3,10 @@
 # Simple backend startup
 cd "$(dirname "$0")"
 
-# Activate the correct venv (in DUNK.ai directory)
-if [ -d ".venv" ]; then
+# Activate the correct venv (check parent directory first, then current)
+if [ -d "../.venv" ]; then
+    source ../.venv/bin/activate
+elif [ -d ".venv" ]; then
     source .venv/bin/activate
 elif [ -d "venv" ]; then
     source venv/bin/activate
