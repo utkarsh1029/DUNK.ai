@@ -482,7 +482,7 @@ const LoanClarityEngineChat = ({ sidebarOpen, setSidebarOpen, user }) => {
     }
 
     if (intent === 'eligibility') {
-      const payload = {
+      const eligibilityPayload = {
         monthly_income: payload.monthly_income,
         annual_rate: payload.annual_rate,
         tenure_years: payload.tenure_years,
@@ -494,7 +494,7 @@ const LoanClarityEngineChat = ({ sidebarOpen, setSidebarOpen, user }) => {
       const data = await fetchJson(`${API_BASE_URL}/api/loans/eligibility`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(eligibilityPayload)
       });
       return formatEligibility(data);
     }
