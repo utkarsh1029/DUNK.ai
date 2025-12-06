@@ -172,13 +172,14 @@ const LoanClarityEngineChat = ({ sidebarOpen, setSidebarOpen, user }) => {
   };
 
   const formatEmi = (payload, data) => {
-    return `Reducing balance EMI for ${currency(payload.principal)} @ ${
-      payload.annual_rate
-    }% for ${payload.tenure_years} years (${payload.repayment_frequency}):\n• EMI: ${currency(
-      data.emi
-    )}\n• Total interest: ${currency(data.total_interest)}\n• Total payment: ${currency(
-      data.total_payment
-    )}\n• Payments: ${data.number_of_payments}`;
+    if (!payload || !data) return 'Unable to format EMI: missing data.';
+    return `Reducing balance EMI for ${currency(payload.principal || 0)} @ ${
+      payload.annual_rate || 0
+    }% for ${payload.tenure_years || 0} years (${payload.repayment_frequency || 'monthly'}):\n• EMI: ${currency(
+      data.emi || 0
+    )}\n• Total interest: ${currency(data.total_interest || 0)}\n• Total payment: ${currency(
+      data.total_payment || 0
+    )}\n• Payments: ${data.number_of_payments || 0}`;
   };
 
   const formatComparison = (data) => {
