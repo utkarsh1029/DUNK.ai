@@ -23,14 +23,19 @@ const ChatPageLayout = ({ children, category }) => {
 
   // Load chat history
   const loadChatHistory = () => {
-    const savedHistory = localStorage.getItem('dunk-chat-history');
-    if (savedHistory) {
-      const history = JSON.parse(savedHistory);
-      // Filter by current category
-      const filtered = category 
-        ? history.filter(chat => chat.category?.id === category.id)
-        : history;
-      setChatHistory(filtered);
+    try {
+      const savedHistory = localStorage.getItem('dunk-chat-history');
+      if (savedHistory) {
+        const history = JSON.parse(savedHistory);
+        // Filter by current category
+        const filtered = category 
+          ? history.filter(chat => chat.category?.id === category.id)
+          : history;
+        setChatHistory(filtered);
+      }
+    } catch (error) {
+      // If parsing fails, start with empty history
+      setChatHistory([]);
     }
   };
 
