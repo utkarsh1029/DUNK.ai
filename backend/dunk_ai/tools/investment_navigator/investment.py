@@ -95,9 +95,8 @@ class InvestmentNavigator:
             "kotak bank": "KOTAKBANK.NS"
         }
 
-
         # --- Try live Yahoo search first ---
-        
+
         try:
             url = f"https://query2.finance.yahoo.com/v1/finance/search?q={query}"
             headers = {"User-Agent": "Mozilla/5.0"}  # ✅ Add this
