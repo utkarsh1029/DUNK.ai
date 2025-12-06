@@ -237,7 +237,7 @@ const BaseChatLayout = ({
                     handleSend();
                   }
                 }}
-                placeholder={`Ask me anything about ${category.title.toLowerCase()}...`}
+                placeholder={`Ask me anything about ${category?.title?.toLowerCase() || 'your finances'}...`}
                 rows="1"
                 className="input resize-none pr-20"
                 style={{ minHeight: '48px', maxHeight: '120px' }}
