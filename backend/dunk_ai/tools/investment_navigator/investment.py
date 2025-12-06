@@ -147,7 +147,7 @@ class InvestmentNavigator:
                print(f"[get_stock_price] ⚠️ NSE fallback failed for {ticker}, switching to Google Finance...")
                google_result = self.get_google_price(ticker)
                return google_result
-            
+
             # ✅ Defensive checks
             latest = data["Close"].dropna().iloc[-1]
             previous = data["Close"].dropna().iloc[-2]
