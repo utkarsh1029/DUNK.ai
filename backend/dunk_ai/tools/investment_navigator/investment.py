@@ -42,7 +42,6 @@ class InvestmentNavigator:
     def __init__(self):
         pass
 
-    
     def resolve_ticker(self, name: str) -> str:
         query = name.strip().lower().replace(" ", "")
 
