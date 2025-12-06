@@ -105,11 +105,11 @@ const InvestmentNavigatorChat = ({ sidebarOpen, setSidebarOpen, user }) => {
       const data = await fetchJson(
         `${API_BASE_URL}/api/investment/price/${encodeURIComponent(ticker)}`
       );
-      return `Live snapshot for ${data.ticker} (${data.source}):\n• Current price: ${currency(
-        data.current_price
+      return `Live snapshot for ${data.ticker || ticker} (${data.source || 'Unknown'}):\n• Current price: ${currency(
+        data.current_price || 0
       )}\n• Previous close: ${currency(
-        data.previous_close || data.current_price
-      )}\n• Intraday change: ${data.day_change_percent ?? 'N/A'}%\nTrend: ${data.trend}`;
+        data.previous_close || data.current_price || 0
+      )}\n• Intraday change: ${data.day_change_percent ?? 'N/A'}%\nTrend: ${data.trend || 'N/A'}`;
     }
 
     if (lowerInput.includes('insight') || lowerInput.includes('summary')) {
