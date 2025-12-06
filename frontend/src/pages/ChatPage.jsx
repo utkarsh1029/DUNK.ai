@@ -51,11 +51,14 @@ const ChatPage = () => {
   const handleSend = async () => {
     if (!input.trim()) return;
 
+    const now = Date.now();
+    const timestamp = new Date().toISOString();
+    
     const userMessage = {
-      id: Date.now(),
+      id: now,
       role: 'user',
       content: input,
-      timestamp: new Date().toISOString()
+      timestamp
     };
 
     setMessages(prev => [...prev, userMessage]);
@@ -65,10 +68,10 @@ const ChatPage = () => {
     setTimeout(() => {
       const aiResponse = generateAIResponse(input);
       const aiMessage = {
-        id: Date.now() + 1,
+        id: now + 1,
         role: 'assistant',
         content: aiResponse,
-        timestamp: new Date().toISOString()
+        timestamp
       };
       setMessages(prev => [...prev, aiMessage]);
 
