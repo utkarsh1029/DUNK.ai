@@ -29,16 +29,25 @@ const ChatPage = () => {
 
   // Load chat history from localStorage
   useEffect(() => {
-    const savedHistory = localStorage.getItem('dunk-chat-history');
-    if (savedHistory) {
-      setChatHistory(JSON.parse(savedHistory));
+    try {
+      const savedHistory = localStorage.getItem('dunk-chat-history');
+      if (savedHistory) {
+        setChatHistory(JSON.parse(savedHistory));
+      }
+    } catch (error) {
+      // If parsing fails, start with empty history
+      setChatHistory([]);
     }
   }, []);
 
   // Save chat history to localStorage
   useEffect(() => {
     if (chatHistory.length > 0) {
-      localStorage.setItem('dunk-chat-history', JSON.stringify(chatHistory));
+      try {
+        localStorage.setItem('dunk-chat-history', JSON.stringify(chatHistory));
+      } catch (error) {
+        // Silently fail if localStorage is unavailable
+      }
     }
   }, [chatHistory]);
 
@@ -51,11 +60,14 @@ const ChatPage = () => {
   const handleSend = async () => {
     if (!input.trim()) return;
 
+    const now = Date.now();
+    const timestamp = new Date().toISOString();
+    
     const userMessage = {
-      id: Date.now(),
+      id: now,
       role: 'user',
       content: input,
-      timestamp: new Date().toISOString()
+      timestamp
     };
 
     setMessages(prev => [...prev, userMessage]);
@@ -65,15 +77,16 @@ const ChatPage = () => {
     setTimeout(() => {
       const aiResponse = generateAIResponse(input);
       const aiMessage = {
-        id: Date.now() + 1,
+        id: now + 1,
         role: 'assistant',
         content: aiResponse,
-        timestamp: new Date().toISOString()
+        timestamp
       };
       setMessages(prev => [...prev, aiMessage]);
 
-      // Update chat history
-      updateChatHistory([...messages, userMessage, aiMessage]);
+      // Update chat history with latest messages
+      const updatedMessages = [...messages, userMessage, aiMessage];
+      updateChatHistory(updatedMessages);
     }, 1000);
   };
 
@@ -98,9 +111,10 @@ const ChatPage = () => {
 
   // Update chat history
   const updateChatHistory = (currentMessages) => {
-    if (currentMessages.length === 0) return;
+    if (!currentMessages || currentMessages.length === 0) return;
 
-    const chatTitle = currentMessages[0].content.slice(0, 50) + '...';
+    const firstMessage = currentMessages[0];
+    const chatTitle = (firstMessage?.content || '').slice(0, 50) + '...';
     const chatData = {
       id: currentChatId || Date.now(),
       title: chatTitle,
@@ -140,9 +154,10 @@ const ChatPage = () => {
 
   // Load chat from history
   const loadChat = (chat) => {
-    setMessages(chat.messages);
+    if (!chat) return;
+    setMessages(chat.messages || []);
     setCurrentChatId(chat.id);
-    setCurrentCategory(chat.category);
+    setCurrentCategory(chat.category || null);
     setSidebarOpen(false);
   };
 
@@ -210,8 +225,8 @@ const ChatPage = () => {
                 {chat.title}
               </div>
               <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                <span>{new Date(chat.timestamp).toLocaleDateString()}</span>
-                {chat.category && (
+                <span>{chat.timestamp ? new Date(chat.timestamp).toLocaleDateString() : 'N/A'}</span>
+                {chat.category && chat.category.title && (
                   <span className="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded">
                     {chat.category.title.split(' ')[0]}
                   </span>
@@ -354,11 +369,11 @@ const ChatPage = () => {
               </div>
               
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                Hi {user?.name?.split(' ')[0]}, How can I help you?
+                Hi {user?.name?.split(' ')[0] || 'there'}, How can I help you?
               </h2>
               {currentCategory ? (
                 <p className="text-gray-600 dark:text-gray-400 mb-8">
-                  Ask me anything about {currentCategory.title.toLowerCase()}
+                  Ask me anything about {currentCategory?.title?.toLowerCase() || 'your finances'}
                 </p>
               ) : (
                 <p className="text-gray-600 dark:text-gray-400 mb-8">

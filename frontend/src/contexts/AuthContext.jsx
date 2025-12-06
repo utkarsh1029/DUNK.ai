@@ -16,8 +16,12 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   // Check if user is already logged in (from localStorage)
   const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem('dunk-user');
-    return savedUser ? JSON.parse(savedUser) : null;
+    try {
+      const savedUser = localStorage.getItem('dunk-user');
+      return savedUser ? JSON.parse(savedUser) : null;
+    } catch (error) {
+      return null;
+    }
   });
 
   const [isAuthenticated, setIsAuthenticated] = useState(!!user);
@@ -30,10 +34,14 @@ export const AuthProvider = ({ children }) => {
 
   // Save user to localStorage whenever it changes
   useEffect(() => {
-    if (user) {
-      localStorage.setItem('dunk-user', JSON.stringify(user));
-    } else {
-      localStorage.removeItem('dunk-user');
+    try {
+      if (user) {
+        localStorage.setItem('dunk-user', JSON.stringify(user));
+      } else {
+        localStorage.removeItem('dunk-user');
+      }
+    } catch (error) {
+      // Silently fail if localStorage is unavailable
     }
   }, [user]);
 
@@ -60,8 +68,12 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     setIsAuthenticated(false);
-    localStorage.removeItem('dunk-user');
-    localStorage.removeItem('dunk-chat-history');
+    try {
+      localStorage.removeItem('dunk-user');
+      localStorage.removeItem('dunk-chat-history');
+    } catch (error) {
+      // Silently fail if localStorage is unavailable
+    }
   };
 
   // Update user profile

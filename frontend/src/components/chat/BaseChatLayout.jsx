@@ -28,18 +28,21 @@ const BaseChatLayout = ({
     const content = (messageOverride ?? input).trim();
     if (!content || isLoading) return;
     
+    const now = Date.now();
+    const timestamp = new Date().toISOString();
+    
     const userMessage = {
-      id: Date.now(),
+      id: now,
       role: 'user',
       content,
-      timestamp: new Date().toISOString()
+      timestamp
     };
 
     const placeholderMessage = {
-      id: Date.now() + 1,
+      id: now + 1,
       role: 'assistant',
       content: 'Analyzing your request...',
-      timestamp: new Date().toISOString()
+      timestamp
     };
 
     const optimisticMessages = [...messages, userMessage, placeholderMessage];
@@ -79,9 +82,10 @@ const BaseChatLayout = ({
 
   // Save chat history
   const saveChatHistory = (currentMessages) => {
-    if (currentMessages.length === 0) return;
+    if (!currentMessages || currentMessages.length === 0) return;
 
-    const chatTitle = currentMessages[0].content.slice(0, 50) + '...';
+    const firstMessage = currentMessages[0];
+    const chatTitle = (firstMessage?.content || '').slice(0, 50) + '...';
     const chatData = {
       id: currentChatId || Date.now(),
       title: chatTitle,
@@ -90,8 +94,16 @@ const BaseChatLayout = ({
       timestamp: new Date().toISOString()
     };
 
-    const savedHistory = localStorage.getItem('dunk-chat-history');
-    const history = savedHistory ? JSON.parse(savedHistory) : [];
+    let history = [];
+    try {
+      const savedHistory = localStorage.getItem('dunk-chat-history');
+      if (savedHistory) {
+        history = JSON.parse(savedHistory);
+      }
+    } catch (error) {
+      // If parsing fails, start with empty history
+      history = [];
+    }
     
     const existingIndex = history.findIndex(chat => chat.id === chatData.id);
     if (existingIndex >= 0) {
@@ -99,8 +111,11 @@ const BaseChatLayout = ({
     } else {
       history.unshift(chatData);
     }
-    
-    localStorage.setItem('dunk-chat-history', JSON.stringify(history));
+    try {
+      localStorage.setItem('dunk-chat-history', JSON.stringify(history));
+    } catch (error) {
+      // Silently fail if localStorage is unavailable
+    }
 
     if (!currentChatId) {
       setCurrentChatId(chatData.id);
@@ -136,10 +151,10 @@ const BaseChatLayout = ({
             </div>
             
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              Hi {user?.name?.split(' ')[0]}, How can I help you?
+              Hi {user?.name?.split(' ')[0] || 'there'}, How can I help you?
             </h2>
             <p className="text-gray-600 dark:text-gray-400 mb-8">
-              Ask me anything about {category.title.toLowerCase()}
+              Ask me anything about {category?.title?.toLowerCase() || 'your finances'}
             </p>
             
             {/* Category-specific prompts */}
@@ -222,7 +237,7 @@ const BaseChatLayout = ({
                     handleSend();
                   }
                 }}
-                placeholder={`Ask me anything about ${category.title.toLowerCase()}...`}
+                placeholder={`Ask me anything about ${category?.title?.toLowerCase() || 'your finances'}...`}
                 rows="1"
                 className="input resize-none pr-20"
                 style={{ minHeight: '48px', maxHeight: '120px' }}

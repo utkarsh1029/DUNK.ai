@@ -49,7 +49,7 @@ def get_forecast_plot(ticker: str):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
+
 
 @router.get("/ai_insight/{ticker}")
 def get_ai_insight(ticker: str):

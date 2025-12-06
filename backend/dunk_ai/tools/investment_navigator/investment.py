@@ -42,7 +42,6 @@ class InvestmentNavigator:
     def __init__(self):
         pass
 
-    
     def resolve_ticker(self, name: str) -> str:
         query = name.strip().lower().replace(" ", "")
 
@@ -96,9 +95,8 @@ class InvestmentNavigator:
             "kotak bank": "KOTAKBANK.NS"
         }
 
-
         # --- Try live Yahoo search first ---
-        
+
         try:
             url = f"https://query2.finance.yahoo.com/v1/finance/search?q={query}"
             headers = {"User-Agent": "Mozilla/5.0"}  # ✅ Add this
@@ -123,7 +121,6 @@ class InvestmentNavigator:
         print(f"[resolve_ticker] 🧩 Guessing ticker: {guessed_symbol}")
         return guessed_symbol
 
-        
     def get_stock_price(self, query: str) -> Dict[str, Any]:
         """
         Fetch live stock price by name or ticker.
@@ -150,7 +147,7 @@ class InvestmentNavigator:
                print(f"[get_stock_price] ⚠️ NSE fallback failed for {ticker}, switching to Google Finance...")
                google_result = self.get_google_price(ticker)
                return google_result
-            
+
             # ✅ Defensive checks
             latest = data["Close"].dropna().iloc[-1]
             previous = data["Close"].dropna().iloc[-2]

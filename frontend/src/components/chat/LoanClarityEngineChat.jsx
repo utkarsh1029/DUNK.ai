@@ -140,67 +140,80 @@ const LoanClarityEngineChat = ({ sidebarOpen, setSidebarOpen, user }) => {
   const prompts = featurePrompts['loan-clarity-engine'];
 
   const formatEligibility = (data) => {
-    return `Loan eligibility summary:\n• Monthly income: ${currency(data.monthly_income)}\n• Maximum EMI capacity: ${currency(
-      data.maximum_emi
+    if (!data) return 'Unable to format eligibility: missing data.';
+    return `Loan eligibility summary:\n• Monthly income: ${currency(data.monthly_income || 0)}\n• Maximum EMI capacity: ${currency(
+      data.maximum_emi || 0
     )}\n• Available EMI after obligations: ${currency(
-      data.available_emi
+      data.available_emi || 0
     )}\n• Maximum loan amount: ${currency(
-      data.maximum_loan_amount
+      data.maximum_loan_amount || 0
     )}\n• Recommended loan amount (80% safety): ${currency(
-      data.recommended_loan_amount
-    )}\n• Debt-to-income ratio: ${data.debt_to_income_ratio}%\n\nKeep your EMI within ${currency(
-      data.available_emi
+      data.recommended_loan_amount || 0
+    )}\n• Debt-to-income ratio: ${data.debt_to_income_ratio || 0}%\n\nKeep your EMI within ${currency(
+      data.available_emi || 0
     )} for a healthy profile.`;
   };
 
   const formatAffordability = (data) => {
+    if (!data) return 'Unable to format affordability: missing data.';
     return `Affordability check for ${currency(
-      data.desired_loan_amount
-    )}:\n• Required EMI: ${currency(data.required_emi)}\n• Total EMI with existing loans: ${currency(
-      data.total_emi_with_existing
+      data.desired_loan_amount || 0
+    )}:\n• Required EMI: ${currency(data.required_emi || 0)}\n• Total EMI with existing loans: ${currency(
+      data.total_emi_with_existing || 0
     )}\n• Maximum safe EMI: ${currency(
-      data.maximum_emi_capacity
+      data.maximum_emi_capacity || 0
     )}\n• Affordable loan amount: ${currency(
-      data.affordable_loan_amount
+      data.affordable_loan_amount || 0
     )}\n• Result: ${data.is_affordable ? '✅ Within limit' : '⚠️ Exceeds safe range'}${
       !data.is_affordable
-        ? `\nShortfall vs eligibility: ${currency(Math.abs(data.shortfall))}`
+        ? `\nShortfall vs eligibility: ${currency(Math.abs(data.shortfall || 0))}`
         : ''
-    }\n\nActual debt ratio: ${data.emi_to_income_ratio_actual}%`;
+    }\n\nActual debt ratio: ${data.emi_to_income_ratio_actual || 0}%`;
   };
 
   const formatEmi = (payload, data) => {
-    return `Reducing balance EMI for ${currency(payload.principal)} @ ${
-      payload.annual_rate
-    }% for ${payload.tenure_years} years (${payload.repayment_frequency}):\n• EMI: ${currency(
-      data.emi
-    )}\n• Total interest: ${currency(data.total_interest)}\n• Total payment: ${currency(
-      data.total_payment
-    )}\n• Payments: ${data.number_of_payments}`;
+    if (!payload || !data) return 'Unable to format EMI: missing data.';
+    return `Reducing balance EMI for ${currency(payload.principal || 0)} @ ${
+      payload.annual_rate || 0
+    }% for ${payload.tenure_years || 0} years (${payload.repayment_frequency || 'monthly'}):\n• EMI: ${currency(
+      data.emi || 0
+    )}\n• Total interest: ${currency(data.total_interest || 0)}\n• Total payment: ${currency(
+      data.total_payment || 0
+    )}\n• Payments: ${data.number_of_payments || 0}`;
   };
 
   const formatComparison = (data) => {
+    if (!data || !data.comparisons || !Array.isArray(data.comparisons)) {
+      return 'Unable to format comparison: missing or invalid data.';
+    }
     const summary = data.comparisons
       .map(
         (loan) =>
           `• ${loan.loan_name || 'Option'}: EMI ${currency(
-            loan.emi
-          )}, total interest ${currency(loan.total_interest)}`
+            loan.emi || 0
+          )}, total interest ${currency(loan.total_interest || 0)}`
       )
       .join('\n');
-    const best = data.best_option;
-    return `Loan comparison:\n${summary}\n\nBest option → ${best.loan_name || `Option ${best.index + 1}`} (${currency(
-      best.emi
-    )}/month, total cost ${currency(best.total_payment)})`;
+    const best = data.best_option || {};
+    return `Loan comparison:\n${summary}\n\nBest option → ${best.loan_name || `Option ${(best.index ?? 0) + 1}`} (${currency(
+      best.emi || 0
+    )}/month, total cost ${currency(best.total_payment || 0)})`;
   };
 
   const fetchJson = async (url, options) => {
-    const response = await fetch(url, options);
-    if (!response.ok) {
-      const body = await response.json().catch(() => ({}));
-      throw new Error(body.detail ?? 'Backend request failed.');
+    try {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body.detail ?? 'Backend request failed.');
+      }
+      return response.json();
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error('Network error: Backend request failed.');
     }
-    return response.json();
   };
 
   const baseLoanParams = (userInput, overrides = {}) => {
@@ -225,47 +238,65 @@ const LoanClarityEngineChat = ({ sidebarOpen, setSidebarOpen, user }) => {
     };
   };
 
-  const formatScheduleSummary = (data) =>
-    `Generated amortization schedule with ${
+  const formatScheduleSummary = (data) => {
+    if (!data.schedule || data.schedule.length === 0) {
+      return 'Generated amortization schedule with no payments.';
+    }
+    const firstPayment = data.schedule[0];
+    const lastPayment = data.schedule[data.schedule.length - 1];
+    return `Generated amortization schedule with ${
       data.schedule.length
     } payments.\nFirst payment: Principal ₹${
-      data.schedule[0].principal_paid
-    }, Interest ₹${data.schedule[0].interest_paid}\nLast payment: Principal ₹${
-      data.schedule[data.schedule.length - 1].principal_paid
-    }, Interest ₹${data.schedule[data.schedule.length - 1].interest_paid}\nTotal payments: ${
-      data.yearly_summary.length
+      firstPayment.principal_paid
+    }, Interest ₹${firstPayment.interest_paid}\nLast payment: Principal ₹${
+      lastPayment.principal_paid
+    }, Interest ₹${lastPayment.interest_paid}\nTotal payments: ${
+      data.yearly_summary?.length || 0
     } years summarized.`;
+  };
 
-  const formatPrepayment = (result) =>
-    `Prepayment impact:\n• Original EMI: ${currency(result.original_emi)}\n• Outstanding principal before prepayment: ${currency(
-      result.outstanding_principal
-    )}\n• New principal: ${currency(result.new_principal)}\n${
+  const formatPrepayment = (result) => {
+    if (!result) return 'Unable to format prepayment result: missing data.';
+    return `Prepayment impact:\n• Original EMI: ${currency(result.original_emi || 0)}\n• Outstanding principal before prepayment: ${currency(
+      result.outstanding_principal || 0
+    )}\n• New principal: ${currency(result.new_principal || 0)}\n${
       result.new_emi
         ? `• New EMI: ${currency(result.new_emi)}`
-        : `• New tenure: ${result.new_tenure_years?.toFixed(2)} years`
-    }\n• Interest saved: ${currency(result.interest_saved)}`;
+        : `• New tenure: ${result.new_tenure_years?.toFixed(2) || 'N/A'} years`
+    }\n• Interest saved: ${currency(result.interest_saved || 0)}`;
+  };
 
-  const formatSettlement = (result) =>
-    `Early settlement summary:\n• Outstanding principal: ${currency(
-      result.outstanding_principal
-    )}\n• Settlement amount: ${currency(result.settlement_amount)}\n• Interest saved: ${currency(
-      result.interest_saved
+  const formatSettlement = (result) => {
+    if (!result) return 'Unable to format settlement result: missing data.';
+    return `Early settlement summary:\n• Outstanding principal: ${currency(
+      result.outstanding_principal || 0
+    )}\n• Settlement amount: ${currency(result.settlement_amount || 0)}\n• Interest saved: ${currency(
+      result.interest_saved || 0
     )}`;
+  };
 
-  const formatModifyEmi = (result) =>
-    `EMI Modification result:\n• Original EMI: ${currency(result.original_emi)}\n• New tenure: ${result.new_tenure_years?.toFixed(
+  const formatModifyEmi = (result) => {
+    if (!result) return 'Unable to format EMI modification result: missing data.';
+    return `EMI Modification result:\n• Original EMI: ${currency(result.original_emi || 0)}\n• New tenure: ${result.new_tenure_years?.toFixed(
       2
-    )} years\n• Interest saved: ${currency(result.interest_saved)}`;
+    ) || 'N/A'} years\n• Interest saved: ${currency(result.interest_saved || 0)}`;
+  };
 
-  const formatModifyTenure = (result) =>
-    `Tenure modification result:\n• Original EMI: ${currency(result.original_emi)}\n• New EMI: ${currency(
-      result.new_emi
+  const formatModifyTenure = (result) => {
+    if (!result) return 'Unable to format tenure modification result: missing data.';
+    return `Tenure modification result:\n• Original EMI: ${currency(result.original_emi || 0)}\n• New EMI: ${currency(
+      result.new_emi || 0
     )}\n• Interest difference: ${currency(result.interest_difference || 0)}`;
+  };
 
-  const formatEffectiveRate = (data) =>
-    `Effective rate: ${data.effective_rate.toFixed(2)}%\nAPR details:\n• Effective rate: ${data.apr_details.effective_rate.toFixed(
+  const formatEffectiveRate = (data) => {
+    if (!data || !data.effective_rate || !data.apr_details) {
+      return 'Unable to format effective rate: missing data.';
+    }
+    return `Effective rate: ${data.effective_rate.toFixed(2)}%\nAPR details:\n• Effective rate: ${data.apr_details.effective_rate?.toFixed(
       2
-    )}%\n• APR: ${data.apr_details.apr.toFixed(2)}%`;
+    ) || 'N/A'}%\n• APR: ${data.apr_details.apr?.toFixed(2) || 'N/A'}%`;
+  };
 
   const [loanProfile, setLoanProfile] = useState(() => {
     if (typeof window === 'undefined') {
@@ -280,7 +311,7 @@ const LoanClarityEngineChat = ({ sidebarOpen, setSidebarOpen, user }) => {
     try {
       return hydrateProfile(JSON.parse(stored));
     } catch (error) {
-      console.warn('Failed to parse saved loan profile', error);
+      // Silently fail and return default profile if parsing fails
       return { ...DEFAULT_PROFILE };
     }
   });
@@ -293,7 +324,7 @@ const LoanClarityEngineChat = ({ sidebarOpen, setSidebarOpen, user }) => {
           window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
         }
       } catch (error) {
-        console.warn('Failed to persist loan profile', error);
+        // Silently fail if localStorage is unavailable (e.g., private browsing)
       }
       return next;
     });
@@ -426,8 +457,8 @@ const LoanClarityEngineChat = ({ sidebarOpen, setSidebarOpen, user }) => {
         }
       );
       return `Outstanding principal after ${
-        outstandingPayload.payments_made
-      } payments: ${currency(data.outstanding_principal)}`;
+        outstandingPayload.payments_made || 0
+      } payments: ${currency(data.outstanding_principal || 0)}`;
     }
 
     if (intent === 'prepayment') {
@@ -482,7 +513,7 @@ const LoanClarityEngineChat = ({ sidebarOpen, setSidebarOpen, user }) => {
     }
 
     if (intent === 'eligibility') {
-      const payload = {
+      const eligibilityPayload = {
         monthly_income: payload.monthly_income,
         annual_rate: payload.annual_rate,
         tenure_years: payload.tenure_years,
@@ -494,7 +525,7 @@ const LoanClarityEngineChat = ({ sidebarOpen, setSidebarOpen, user }) => {
       const data = await fetchJson(`${API_BASE_URL}/api/loans/eligibility`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(eligibilityPayload)
       });
       return formatEligibility(data);
     }

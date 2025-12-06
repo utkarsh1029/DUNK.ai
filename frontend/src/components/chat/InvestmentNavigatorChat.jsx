@@ -50,12 +50,20 @@ const detectTicker = (input) => {
 };
 
 const fetchJson = async (url) => {
-  const response = await fetch(url);
-  if (!response.ok) {
-    const body = await response.json().catch(() => ({}));
-    throw new Error(body.detail ?? 'Unable to fetch investment data.');
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({}));
+      throw new Error(body.detail ?? 'Unable to fetch investment data.');
+    }
+    return response.json();
+  } catch (error) {
+    // Re-throw with more context if needed
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error('Network error: Unable to fetch investment data.');
   }
-  return response.json();
 };
 
 const InvestmentNavigatorChat = ({ sidebarOpen, setSidebarOpen, user }) => {
@@ -68,18 +76,21 @@ const InvestmentNavigatorChat = ({ sidebarOpen, setSidebarOpen, user }) => {
   const prompts = featurePrompts['investment-navigator'];
 
   const formatStockAnalytics = (data) => {
+    if (!data || !data.ticker) {
+      return 'Unable to format stock analytics: missing data.';
+    }
     const returns = ['one_week_return_%', 'one_month_return_%', 'three_month_return_%']
-      .map((key) => (data[key] ? `${key.replace(/_/g, ' ')}: ${data[key]}%` : null))
+      .map((key) => (data[key] != null ? `${key.replace(/_/g, ' ')}: ${data[key]}%` : null))
       .filter(Boolean)
       .join('\n');
 
     return `Analytics for ${data.ticker}:\n• Price: ${currency(
-      data.current_price
-    )}\n• Day change: ${data['day_change_%']}%\n• RSI: ${data.rsi}\n• SMA20/SMA50: ${data.sma_20} / ${data.sma_50}\n• Volatility: ${data['volatility_%']}%\n• 52w range: ${currency(
-      data['52_week_low']
-    )} - ${currency(data['52_week_high'])}\n${returns ? `\n${returns}` : ''}\nTrend: ${
-      data.trend_summary
-    }\nInsight: ${data.insight_summary}`;
+      data.current_price || 0
+    )}\n• Day change: ${data['day_change_%'] ?? 'N/A'}%\n• RSI: ${data.rsi ?? 'N/A'}\n• SMA20/SMA50: ${data.sma_20 ?? 'N/A'} / ${data.sma_50 ?? 'N/A'}\n• Volatility: ${data['volatility_%'] ?? 'N/A'}%\n• 52w range: ${currency(
+      data['52_week_low'] || 0
+    )} - ${currency(data['52_week_high'] || 0)}\n${returns ? `\n${returns}` : ''}\nTrend: ${
+      data.trend_summary || 'N/A'
+    }\nInsight: ${data.insight_summary || 'N/A'}`;
   };
 
   const generateResponse = async (userInput) => {
@@ -93,7 +104,7 @@ const InvestmentNavigatorChat = ({ sidebarOpen, setSidebarOpen, user }) => {
       const data = await fetchJson(
         `${API_BASE_URL}/api/investment/mutual-fund?${params.toString()}`
       );
-      return `Latest NAV for ${data.scheme_name}:\n• NAV: ₹${data.latest_nav}\n• Date: ${data.date}\nSource: ${data.note}`;
+      return `Latest NAV for ${data.scheme_name || scheme}:\n• NAV: ₹${data.latest_nav || 'N/A'}\n• Date: ${data.date || 'N/A'}\nSource: ${data.note || 'N/A'}`;
     }
 
     const ticker = detectTicker(userInput);
@@ -102,18 +113,18 @@ const InvestmentNavigatorChat = ({ sidebarOpen, setSidebarOpen, user }) => {
       const data = await fetchJson(
         `${API_BASE_URL}/api/investment/price/${encodeURIComponent(ticker)}`
       );
-      return `Live snapshot for ${data.ticker} (${data.source}):\n• Current price: ${currency(
-        data.current_price
+      return `Live snapshot for ${data.ticker || ticker} (${data.source || 'Unknown'}):\n• Current price: ${currency(
+        data.current_price || 0
       )}\n• Previous close: ${currency(
-        data.previous_close || data.current_price
-      )}\n• Intraday change: ${data.day_change_percent ?? 'N/A'}%\nTrend: ${data.trend}`;
+        data.previous_close || data.current_price || 0
+      )}\n• Intraday change: ${data.day_change_percent ?? 'N/A'}%\nTrend: ${data.trend || 'N/A'}`;
     }
 
     if (lowerInput.includes('insight') || lowerInput.includes('summary')) {
       const data = await fetchJson(
         `${API_BASE_URL}/api/investment/ai_insight/${encodeURIComponent(ticker)}`
       );
-      return `AI insight for ${data.ticker} (${data.provider || data.model_used}):\n${data.ai_insight}`;
+      return `AI insight for ${data.ticker || ticker} (${data.provider || data.model_used || 'Unknown'}):\n${data.ai_insight || 'No insight available.'}`;
     }
 
     if (lowerInput.includes('chart') || lowerInput.includes('plot') || lowerInput.includes('forecast')) {
@@ -140,9 +151,9 @@ const InvestmentNavigatorChat = ({ sidebarOpen, setSidebarOpen, user }) => {
     );
     const aiInsight = await fetchJson(
       `${API_BASE_URL}/api/investment/ai_insight/${encodeURIComponent(ticker)}`
-    );
+    ).catch(() => ({ ai_insight: 'Unable to fetch AI insight at this time.' }));
 
-    return `${formatStockAnalytics(analytics)}\n\nAI says:\n${aiInsight.ai_insight}`;
+    return `${formatStockAnalytics(analytics)}\n\nAI says:\n${aiInsight.ai_insight || 'No insight available.'}`;
   };
 
   return (

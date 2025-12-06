@@ -16,22 +16,30 @@ export const useTheme = () => {
 export const ThemeProvider = ({ children }) => {
   // Check if user has a saved theme preference, otherwise use 'dark' as default
   const [theme, setTheme] = useState(() => {
-    const savedTheme = localStorage.getItem('dunk-theme');
-    return savedTheme || 'dark';
+    try {
+      const savedTheme = localStorage.getItem('dunk-theme');
+      return savedTheme || 'dark';
+    } catch (error) {
+      return 'dark';
+    }
   });
 
   // Apply theme to document and save to localStorage
   useEffect(() => {
-    const root = window.document.documentElement;
-    
-    // Remove both classes first
-    root.classList.remove('light', 'dark');
-    
-    // Add the current theme class
-    root.classList.add(theme);
-    
-    // Save to localStorage
-    localStorage.setItem('dunk-theme', theme);
+    try {
+      const root = window.document.documentElement;
+      
+      // Remove both classes first
+      root.classList.remove('light', 'dark');
+      
+      // Add the current theme class
+      root.classList.add(theme);
+      
+      // Save to localStorage
+      localStorage.setItem('dunk-theme', theme);
+    } catch (error) {
+      // Silently fail if localStorage is unavailable
+    }
   }, [theme]);
 
   // Toggle between light and dark theme
