@@ -224,8 +224,8 @@ const ChatPage = () => {
                 {chat.title}
               </div>
               <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                <span>{new Date(chat.timestamp).toLocaleDateString()}</span>
-                {chat.category && (
+                <span>{chat.timestamp ? new Date(chat.timestamp).toLocaleDateString() : 'N/A'}</span>
+                {chat.category && chat.category.title && (
                   <span className="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded">
                     {chat.category.title.split(' ')[0]}
                   </span>
