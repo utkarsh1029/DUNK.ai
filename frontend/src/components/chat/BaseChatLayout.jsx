@@ -90,8 +90,16 @@ const BaseChatLayout = ({
       timestamp: new Date().toISOString()
     };
 
-    const savedHistory = localStorage.getItem('dunk-chat-history');
-    const history = savedHistory ? JSON.parse(savedHistory) : [];
+    let history = [];
+    try {
+      const savedHistory = localStorage.getItem('dunk-chat-history');
+      if (savedHistory) {
+        history = JSON.parse(savedHistory);
+      }
+    } catch (error) {
+      // If parsing fails, start with empty history
+      history = [];
+    }
     
     const existingIndex = history.findIndex(chat => chat.id === chatData.id);
     if (existingIndex >= 0) {
