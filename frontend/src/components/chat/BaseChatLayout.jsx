@@ -28,18 +28,21 @@ const BaseChatLayout = ({
     const content = (messageOverride ?? input).trim();
     if (!content || isLoading) return;
     
+    const now = Date.now();
+    const timestamp = new Date().toISOString();
+    
     const userMessage = {
-      id: Date.now(),
+      id: now,
       role: 'user',
       content,
-      timestamp: new Date().toISOString()
+      timestamp
     };
 
     const placeholderMessage = {
-      id: Date.now() + 1,
+      id: now + 1,
       role: 'assistant',
       content: 'Analyzing your request...',
-      timestamp: new Date().toISOString()
+      timestamp
     };
 
     const optimisticMessages = [...messages, userMessage, placeholderMessage];
