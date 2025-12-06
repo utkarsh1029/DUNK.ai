@@ -124,7 +124,7 @@ const InvestmentNavigatorChat = ({ sidebarOpen, setSidebarOpen, user }) => {
       const data = await fetchJson(
         `${API_BASE_URL}/api/investment/ai_insight/${encodeURIComponent(ticker)}`
       );
-      return `AI insight for ${data.ticker} (${data.provider || data.model_used}):\n${data.ai_insight}`;
+      return `AI insight for ${data.ticker || ticker} (${data.provider || data.model_used || 'Unknown'}):\n${data.ai_insight || 'No insight available.'}`;
     }
 
     if (lowerInput.includes('chart') || lowerInput.includes('plot') || lowerInput.includes('forecast')) {
