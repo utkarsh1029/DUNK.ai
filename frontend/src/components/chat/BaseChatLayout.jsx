@@ -107,8 +107,11 @@ const BaseChatLayout = ({
     } else {
       history.unshift(chatData);
     }
-    
-    localStorage.setItem('dunk-chat-history', JSON.stringify(history));
+    try {
+      localStorage.setItem('dunk-chat-history', JSON.stringify(history));
+    } catch (error) {
+      // Silently fail if localStorage is unavailable
+    }
 
     if (!currentChatId) {
       setCurrentChatId(chatData.id);
