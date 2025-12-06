@@ -280,7 +280,7 @@ const LoanClarityEngineChat = ({ sidebarOpen, setSidebarOpen, user }) => {
     try {
       return hydrateProfile(JSON.parse(stored));
     } catch (error) {
-      console.warn('Failed to parse saved loan profile', error);
+      // Silently fail and return default profile if parsing fails
       return { ...DEFAULT_PROFILE };
     }
   });
