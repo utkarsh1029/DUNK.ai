@@ -53,7 +53,7 @@ def calculate_effective_rate(
 
     # Total amount to be repaid (including all charges)
     total_cost = total_payment + processing_fee + other_charges
-    
+
     # Calculate effective rate: the rate that would produce the same total cost
     # if applied to the effective principal
     # Effective rate = ((Total cost - Effective principal) / Effective principal) / tenure * 100
