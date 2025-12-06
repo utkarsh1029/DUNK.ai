@@ -91,22 +91,29 @@ const SmartExpenseCoachChat = ({ sidebarOpen, setSidebarOpen, user }) => {
   };
 
   const generateResponse = async (userInput) => {
-    const payload = buildPayload(userInput);
-    const response = await fetch(`${API_BASE_URL}/api/expense/plan`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+    try {
+      const payload = buildPayload(userInput);
+      const response = await fetch(`${API_BASE_URL}/api/expense/plan`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
 
-    if (!response.ok) {
-      const errorBody = await response.json().catch(() => ({}));
-      throw new Error(
-        errorBody.detail?.[0]?.msg || 'Unable to generate plan right now.'
-      );
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw new Error(
+          errorBody.detail?.[0]?.msg || 'Unable to generate plan right now.'
+        );
+      }
+
+      const data = await response.json();
+      return formatPlan(data);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error('Network error: Unable to generate expense plan.');
     }
-
-    const data = await response.json();
-    return formatPlan(data);
   };
 
   return (
