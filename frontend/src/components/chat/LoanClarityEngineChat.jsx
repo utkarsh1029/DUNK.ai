@@ -444,8 +444,8 @@ const LoanClarityEngineChat = ({ sidebarOpen, setSidebarOpen, user }) => {
         }
       );
       return `Outstanding principal after ${
-        outstandingPayload.payments_made
-      } payments: ${currency(data.outstanding_principal)}`;
+        outstandingPayload.payments_made || 0
+      } payments: ${currency(data.outstanding_principal || 0)}`;
     }
 
     if (intent === 'prepayment') {
