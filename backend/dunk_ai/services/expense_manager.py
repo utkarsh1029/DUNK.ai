@@ -136,7 +136,6 @@ class ExpensePlanner:
                 "type": "GradientBoosting",
                 "loaded": self.model is not None,
                 "fallback_reason": self.model_error,
-                
             },
         )
 
