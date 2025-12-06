@@ -269,10 +269,12 @@ const LoanClarityEngineChat = ({ sidebarOpen, setSidebarOpen, user }) => {
     ) || 'N/A'} years\n• Interest saved: ${currency(result.interest_saved || 0)}`;
   };
 
-  const formatModifyTenure = (result) =>
-    `Tenure modification result:\n• Original EMI: ${currency(result.original_emi)}\n• New EMI: ${currency(
-      result.new_emi
+  const formatModifyTenure = (result) => {
+    if (!result) return 'Unable to format tenure modification result: missing data.';
+    return `Tenure modification result:\n• Original EMI: ${currency(result.original_emi || 0)}\n• New EMI: ${currency(
+      result.new_emi || 0
     )}\n• Interest difference: ${currency(result.interest_difference || 0)}`;
+  };
 
   const formatEffectiveRate = (data) =>
     `Effective rate: ${data.effective_rate.toFixed(2)}%\nAPR details:\n• Effective rate: ${data.apr_details.effective_rate.toFixed(
