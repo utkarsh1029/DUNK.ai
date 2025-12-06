@@ -98,9 +98,10 @@ const ChatPage = () => {
 
   // Update chat history
   const updateChatHistory = (currentMessages) => {
-    if (currentMessages.length === 0) return;
+    if (!currentMessages || currentMessages.length === 0) return;
 
-    const chatTitle = currentMessages[0].content.slice(0, 50) + '...';
+    const firstMessage = currentMessages[0];
+    const chatTitle = (firstMessage?.content || '').slice(0, 50) + '...';
     const chatData = {
       id: currentChatId || Date.now(),
       title: chatTitle,
