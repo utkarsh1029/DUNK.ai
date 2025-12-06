@@ -151,10 +151,10 @@ const BaseChatLayout = ({
             </div>
             
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              Hi {user?.name?.split(' ')[0]}, How can I help you?
+              Hi {user?.name?.split(' ')[0] || 'there'}, How can I help you?
             </h2>
             <p className="text-gray-600 dark:text-gray-400 mb-8">
-              Ask me anything about {category.title.toLowerCase()}
+              Ask me anything about {category?.title?.toLowerCase() || 'your finances'}
             </p>
             
             {/* Category-specific prompts */}
