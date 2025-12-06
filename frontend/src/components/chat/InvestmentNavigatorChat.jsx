@@ -50,12 +50,20 @@ const detectTicker = (input) => {
 };
 
 const fetchJson = async (url) => {
-  const response = await fetch(url);
-  if (!response.ok) {
-    const body = await response.json().catch(() => ({}));
-    throw new Error(body.detail ?? 'Unable to fetch investment data.');
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({}));
+      throw new Error(body.detail ?? 'Unable to fetch investment data.');
+    }
+    return response.json();
+  } catch (error) {
+    // Re-throw with more context if needed
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error('Network error: Unable to fetch investment data.');
   }
-  return response.json();
 };
 
 const InvestmentNavigatorChat = ({ sidebarOpen, setSidebarOpen, user }) => {
