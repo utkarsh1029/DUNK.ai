@@ -155,19 +155,20 @@ const LoanClarityEngineChat = ({ sidebarOpen, setSidebarOpen, user }) => {
   };
 
   const formatAffordability = (data) => {
+    if (!data) return 'Unable to format affordability: missing data.';
     return `Affordability check for ${currency(
-      data.desired_loan_amount
-    )}:\n• Required EMI: ${currency(data.required_emi)}\n• Total EMI with existing loans: ${currency(
-      data.total_emi_with_existing
+      data.desired_loan_amount || 0
+    )}:\n• Required EMI: ${currency(data.required_emi || 0)}\n• Total EMI with existing loans: ${currency(
+      data.total_emi_with_existing || 0
     )}\n• Maximum safe EMI: ${currency(
-      data.maximum_emi_capacity
+      data.maximum_emi_capacity || 0
     )}\n• Affordable loan amount: ${currency(
-      data.affordable_loan_amount
+      data.affordable_loan_amount || 0
     )}\n• Result: ${data.is_affordable ? '✅ Within limit' : '⚠️ Exceeds safe range'}${
       !data.is_affordable
-        ? `\nShortfall vs eligibility: ${currency(Math.abs(data.shortfall))}`
+        ? `\nShortfall vs eligibility: ${currency(Math.abs(data.shortfall || 0))}`
         : ''
-    }\n\nActual debt ratio: ${data.emi_to_income_ratio_actual}%`;
+    }\n\nActual debt ratio: ${data.emi_to_income_ratio_actual || 0}%`;
   };
 
   const formatEmi = (payload, data) => {
