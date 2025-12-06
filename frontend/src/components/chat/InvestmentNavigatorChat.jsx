@@ -68,18 +68,21 @@ const InvestmentNavigatorChat = ({ sidebarOpen, setSidebarOpen, user }) => {
   const prompts = featurePrompts['investment-navigator'];
 
   const formatStockAnalytics = (data) => {
+    if (!data || !data.ticker) {
+      return 'Unable to format stock analytics: missing data.';
+    }
     const returns = ['one_week_return_%', 'one_month_return_%', 'three_month_return_%']
-      .map((key) => (data[key] ? `${key.replace(/_/g, ' ')}: ${data[key]}%` : null))
+      .map((key) => (data[key] != null ? `${key.replace(/_/g, ' ')}: ${data[key]}%` : null))
       .filter(Boolean)
       .join('\n');
 
     return `Analytics for ${data.ticker}:\n• Price: ${currency(
-      data.current_price
-    )}\n• Day change: ${data['day_change_%']}%\n• RSI: ${data.rsi}\n• SMA20/SMA50: ${data.sma_20} / ${data.sma_50}\n• Volatility: ${data['volatility_%']}%\n• 52w range: ${currency(
-      data['52_week_low']
-    )} - ${currency(data['52_week_high'])}\n${returns ? `\n${returns}` : ''}\nTrend: ${
-      data.trend_summary
-    }\nInsight: ${data.insight_summary}`;
+      data.current_price || 0
+    )}\n• Day change: ${data['day_change_%'] ?? 'N/A'}%\n• RSI: ${data.rsi ?? 'N/A'}\n• SMA20/SMA50: ${data.sma_20 ?? 'N/A'} / ${data.sma_50 ?? 'N/A'}\n• Volatility: ${data['volatility_%'] ?? 'N/A'}%\n• 52w range: ${currency(
+      data['52_week_low'] || 0
+    )} - ${currency(data['52_week_high'] || 0)}\n${returns ? `\n${returns}` : ''}\nTrend: ${
+      data.trend_summary || 'N/A'
+    }\nInsight: ${data.insight_summary || 'N/A'}`;
   };
 
   const generateResponse = async (userInput) => {
