@@ -143,9 +143,9 @@ const InvestmentNavigatorChat = ({ sidebarOpen, setSidebarOpen, user }) => {
     );
     const aiInsight = await fetchJson(
       `${API_BASE_URL}/api/investment/ai_insight/${encodeURIComponent(ticker)}`
-    );
+    ).catch(() => ({ ai_insight: 'Unable to fetch AI insight at this time.' }));
 
-    return `${formatStockAnalytics(analytics)}\n\nAI says:\n${aiInsight.ai_insight}`;
+    return `${formatStockAnalytics(analytics)}\n\nAI says:\n${aiInsight.ai_insight || 'No insight available.'}`;
   };
 
   return (
