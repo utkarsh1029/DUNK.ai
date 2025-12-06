@@ -276,10 +276,14 @@ const LoanClarityEngineChat = ({ sidebarOpen, setSidebarOpen, user }) => {
     )}\n• Interest difference: ${currency(result.interest_difference || 0)}`;
   };
 
-  const formatEffectiveRate = (data) =>
-    `Effective rate: ${data.effective_rate.toFixed(2)}%\nAPR details:\n• Effective rate: ${data.apr_details.effective_rate.toFixed(
+  const formatEffectiveRate = (data) => {
+    if (!data || !data.effective_rate || !data.apr_details) {
+      return 'Unable to format effective rate: missing data.';
+    }
+    return `Effective rate: ${data.effective_rate.toFixed(2)}%\nAPR details:\n• Effective rate: ${data.apr_details.effective_rate?.toFixed(
       2
-    )}%\n• APR: ${data.apr_details.apr.toFixed(2)}%`;
+    ) || 'N/A'}%\n• APR: ${data.apr_details.apr?.toFixed(2) || 'N/A'}%`;
+  };
 
   const [loanProfile, setLoanProfile] = useState(() => {
     if (typeof window === 'undefined') {
