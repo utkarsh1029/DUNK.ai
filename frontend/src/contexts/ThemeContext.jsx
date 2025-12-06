@@ -26,16 +26,20 @@ export const ThemeProvider = ({ children }) => {
 
   // Apply theme to document and save to localStorage
   useEffect(() => {
-    const root = window.document.documentElement;
-    
-    // Remove both classes first
-    root.classList.remove('light', 'dark');
-    
-    // Add the current theme class
-    root.classList.add(theme);
-    
-    // Save to localStorage
-    localStorage.setItem('dunk-theme', theme);
+    try {
+      const root = window.document.documentElement;
+      
+      // Remove both classes first
+      root.classList.remove('light', 'dark');
+      
+      // Add the current theme class
+      root.classList.add(theme);
+      
+      // Save to localStorage
+      localStorage.setItem('dunk-theme', theme);
+    } catch (error) {
+      // Silently fail if localStorage is unavailable
+    }
   }, [theme]);
 
   // Toggle between light and dark theme
