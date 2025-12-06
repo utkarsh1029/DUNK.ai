@@ -183,18 +183,21 @@ const LoanClarityEngineChat = ({ sidebarOpen, setSidebarOpen, user }) => {
   };
 
   const formatComparison = (data) => {
+    if (!data || !data.comparisons || !Array.isArray(data.comparisons)) {
+      return 'Unable to format comparison: missing or invalid data.';
+    }
     const summary = data.comparisons
       .map(
         (loan) =>
           `• ${loan.loan_name || 'Option'}: EMI ${currency(
-            loan.emi
-          )}, total interest ${currency(loan.total_interest)}`
+            loan.emi || 0
+          )}, total interest ${currency(loan.total_interest || 0)}`
       )
       .join('\n');
-    const best = data.best_option;
-    return `Loan comparison:\n${summary}\n\nBest option → ${best.loan_name || `Option ${best.index + 1}`} (${currency(
-      best.emi
-    )}/month, total cost ${currency(best.total_payment)})`;
+    const best = data.best_option || {};
+    return `Loan comparison:\n${summary}\n\nBest option → ${best.loan_name || `Option ${(best.index ?? 0) + 1}`} (${currency(
+      best.emi || 0
+    )}/month, total cost ${currency(best.total_payment || 0)})`;
   };
 
   const fetchJson = async (url, options) => {
