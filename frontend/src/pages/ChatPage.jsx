@@ -38,7 +38,11 @@ const ChatPage = () => {
   // Save chat history to localStorage
   useEffect(() => {
     if (chatHistory.length > 0) {
-      localStorage.setItem('dunk-chat-history', JSON.stringify(chatHistory));
+      try {
+        localStorage.setItem('dunk-chat-history', JSON.stringify(chatHistory));
+      } catch (error) {
+        // Silently fail if localStorage is unavailable
+      }
     }
   }, [chatHistory]);
 
