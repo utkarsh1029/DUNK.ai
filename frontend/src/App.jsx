@@ -14,6 +14,9 @@ import InvestmentNavigatorPage from './pages/InvestmentNavigatorPage';
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
+  if (!children) {
+    return null;
+  }
   return isAuthenticated ? children : <Navigate to="/" />;
 };
 
