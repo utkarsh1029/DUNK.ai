@@ -225,16 +225,22 @@ const LoanClarityEngineChat = ({ sidebarOpen, setSidebarOpen, user }) => {
     };
   };
 
-  const formatScheduleSummary = (data) =>
-    `Generated amortization schedule with ${
+  const formatScheduleSummary = (data) => {
+    if (!data.schedule || data.schedule.length === 0) {
+      return 'Generated amortization schedule with no payments.';
+    }
+    const firstPayment = data.schedule[0];
+    const lastPayment = data.schedule[data.schedule.length - 1];
+    return `Generated amortization schedule with ${
       data.schedule.length
     } payments.\nFirst payment: Principal ₹${
-      data.schedule[0].principal_paid
-    }, Interest ₹${data.schedule[0].interest_paid}\nLast payment: Principal ₹${
-      data.schedule[data.schedule.length - 1].principal_paid
-    }, Interest ₹${data.schedule[data.schedule.length - 1].interest_paid}\nTotal payments: ${
-      data.yearly_summary.length
+      firstPayment.principal_paid
+    }, Interest ₹${firstPayment.interest_paid}\nLast payment: Principal ₹${
+      lastPayment.principal_paid
+    }, Interest ₹${lastPayment.interest_paid}\nTotal payments: ${
+      data.yearly_summary?.length || 0
     } years summarized.`;
+  };
 
   const formatPrepayment = (result) =>
     `Prepayment impact:\n• Original EMI: ${currency(result.original_emi)}\n• Outstanding principal before prepayment: ${currency(
