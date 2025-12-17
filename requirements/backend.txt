@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+yfinance
+pandas
+numpy
+requests
+statsmodels
+matplotlib
+joblib
+groq
+
