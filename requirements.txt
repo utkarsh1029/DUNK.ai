@@ -1,0 +1,7 @@
+mcp[server]
+pytest
+python-dotenv
+rich
+numpy
+pandas
+fastmcp
