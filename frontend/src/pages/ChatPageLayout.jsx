@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { 
   Menu, X, Plus, Moon, Sun, User, LogOut, 
-  Settings, Brain, History, BarChart3
+  Settings, Brain, History, BarChart3, Home
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -76,6 +76,15 @@ const ChatPageLayout = ({ children, category }) => {
             </button>
           </div>
           
+          {category && (
+            <button
+              onClick={() => navigate('/chat')}
+              className="mb-4 w-full flex items-center justify-center gap-2 rounded-2xl border border-gray-200 dark:border-dark-border px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-bg transition-colors"
+            >
+              <Home className="w-4 h-4" />
+              Home
+            </button>
+          )}
           <button 
             onClick={startNewChat}
             className="w-full btn-primary flex items-center justify-center space-x-2"
