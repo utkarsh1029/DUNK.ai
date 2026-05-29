@@ -5,9 +5,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 # ✅ Import feature routers
-from dunk_ai.api.routes.expense import router as expense_router
-from dunk_ai.api.routes.investment import router as investment_router
-from dunk_ai.api.routes.loan_clarity import router as loan_router
+from .routes.expense import router as expense_router
+from .routes.investment import router as investment_router
+from .routes.loan_clarity import router as loan_router
 
 app = FastAPI(
     title="DUNK.ai Backend API",
