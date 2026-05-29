@@ -179,9 +179,9 @@ const ChatPage = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-dark-bg">
+    <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-dark-bg">
       {/* History Sidebar */}
-      <div className={`${sidebarOpen ? 'w-64' : 'w-0'} transition-all duration-300 overflow-hidden bg-white dark:bg-dark-card border-r border-gray-200 dark:border-dark-border flex flex-col`}>
+      <div className={`${sidebarOpen ? 'w-64' : 'w-0'} h-screen sticky top-0 flex-shrink-0 transition-all duration-300 overflow-hidden bg-white dark:bg-dark-card border-r border-gray-200 dark:border-dark-border flex flex-col`}>
         <div className="p-4 border-b border-gray-200 dark:border-dark-border">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">

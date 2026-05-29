@@ -129,9 +129,9 @@ const BaseChatLayout = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex-1 flex min-h-0 flex-col">
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="flex-1 min-h-0 overflow-y-auto p-6">
         {messages.length === 0 ? (
           /* Welcome Screen */
           <div className="max-w-3xl mx-auto text-center py-12">
