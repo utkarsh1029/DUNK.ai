@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { 
   Menu, X, Plus, Moon, Sun, User, LogOut, 
-  Settings, Brain, History, BarChart3
+  Settings, Brain, History, BarChart3, Home 
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -60,8 +60,8 @@ const ChatPageLayout = ({ children, category }) => {
     <div className="flex h-screen bg-gray-50 dark:bg-dark-bg">
       {/* History Sidebar */}
       <div className={`${sidebarOpen ? 'w-64' : 'w-0'} transition-all duration-300 overflow-hidden bg-white dark:bg-dark-card border-r border-gray-200 dark:border-dark-border flex flex-col`}>
-        <div className="p-4 border-b border-gray-200 dark:border-dark-border">
-          <div className="flex items-center justify-between mb-4">
+        <div className="p-4 border-b border-gray-200 dark:border-dark-border space-y-3">
+          <div className="flex items-center justify-between mb-2">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold">D</span>
@@ -75,6 +75,15 @@ const ChatPageLayout = ({ children, category }) => {
               <X className="w-5 h-5" />
             </button>
           </div>
+
+          {/* 🏠 PERMANENT HOME NAVIGATION BUTTON */}
+<button
+  onClick={() => navigate('/chat')} // ⚡ FIX: Points straight to your unified master chat workspace view!
+  className="w-full flex items-center justify-center space-x-2 p-2.5 rounded-lg border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-all font-medium text-sm shadow-sm"
+>
+  <Home className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+  <span>Dashboard Home</span>
+</button>
           
           <button 
             onClick={startNewChat}
@@ -213,7 +222,7 @@ const ChatPageLayout = ({ children, category }) => {
         <AnalyticsDashboard onClose={() => setAnalyticsOpen(false)} />
       )}
 
-      {/* Explore Sidebar */}
+      {/* Explore Sidebar Drawer */}
       {exploreOpen && (
         <ExploreSidebar 
           onClose={() => setExploreOpen(false)}
@@ -225,4 +234,3 @@ const ChatPageLayout = ({ children, category }) => {
 };
 
 export default ChatPageLayout;
-

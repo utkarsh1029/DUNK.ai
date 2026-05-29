@@ -129,9 +129,12 @@ const BaseChatLayout = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col">
+    // 💻 FIX LAYER 1: Enforce absolute, rigid viewport matching boundaries 
+    <div className="flex-1 h-screen flex flex-col overflow-hidden bg-[#050b0b]">
+      
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-6">
+      {/* 💻 FIX LAYER 2: Isolate scrolling STRICTLY to this chat bubble/card compartment */}
+      <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
         {messages.length === 0 ? (
           /* Welcome Screen */
           <div className="max-w-3xl mx-auto text-center py-12">
@@ -195,7 +198,7 @@ const BaseChatLayout = ({
                       <Brain className="w-4 h-4 text-white" />
                     )}
                   </div>
-              <div className={`rounded-2xl p-4 ${
+                  <div className={`rounded-2xl p-4 ${
                     message.role === 'user'
                       ? 'bg-primary text-white'
                       : 'bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-border'
@@ -224,7 +227,8 @@ const BaseChatLayout = ({
       </div>
 
       {/* Input Area */}
-      <div className="bg-white dark:bg-dark-card border-t border-gray-200 dark:border-dark-border p-4">
+      {/* 💡 Keep this pinned at the base layout border cleanly */}
+      <div className="bg-white dark:bg-dark-card border-t border-gray-200 dark:border-dark-border p-4 flex-shrink-0">
         <div className="max-w-3xl mx-auto">
           <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="flex items-end space-x-3">
             <div className="flex-1 relative">
@@ -273,6 +277,5 @@ const BaseChatLayout = ({
     </div>
   );
 };
-
 export default BaseChatLayout;
 
