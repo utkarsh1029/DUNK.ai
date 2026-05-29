@@ -1,9 +1,0 @@
-{
-    "mcpServers": {
-      "dunk": {
-        "command": "python",
-        "args": ["server/mcp_server.py"],
-        "cwd": "."
-      }
-    }
-  }
